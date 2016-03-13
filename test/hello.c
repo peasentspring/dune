@@ -16,6 +16,12 @@ static void divide_by_zero_handler(struct dune_tf *tf)
 	tf->rip = (uintptr_t) &recover;
 }
 
+static void gp_handler(struct dune_tf *tf)
+{
+	printf("hello: caught general-protection exception\n");
+	tf->rip = (uintptr_t) &recover;
+}
+
 int main(int argc, char *argv[])
 {
 	volatile int ret;
@@ -31,6 +37,13 @@ int main(int argc, char *argv[])
 	printf("hello: now printing from dune mode\n");
 
 	dune_register_intr_handler(T_DIVIDE, divide_by_zero_handler);
+	dune_register_intr_handler(T_GPFLT, gp_handler);
+
+	unsigned int low, high;
+	unsigned int msr = 0x00000481H;
+	//asm volatile("rdmsr" :"=a" (low),"=d" (high):"c" (msr));
+	printf("edx is:%x, eax is: %x\n", low, high);
+
 
 	ret = 1 / ret; /* divide by zero */
 

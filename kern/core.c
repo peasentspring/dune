@@ -82,8 +82,12 @@ static long dune_dev_ioctl(struct file *filp,
 			r = -EIO;
 			goto out;
 		}
+		/*******added by zwj********/
+		printk(KERN_INFO "ENTER dune_enter\n");
+		/***************************/
 
 		r = dune_enter(&conf, &conf.ret);
+
 		if (r)
 			break;
 

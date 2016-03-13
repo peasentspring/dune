@@ -137,7 +137,9 @@ void dune_trap_handler(int num, struct dune_tf *tf)
 		intr_cbs[num](tf);
 		return;
 	}
-
+	/*****added by zwj**********/
+	dune_printf("nums is: %d\n");
+	/***************************/
 	switch (num) {
 	case T_PGFLT:
 		if (pgflt_cb) {

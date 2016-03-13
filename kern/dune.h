@@ -10,7 +10,9 @@
 
 /* FIXME: this must be reserved in miscdevice.h */
 #define DUNE_MINOR       233
-
+/***added by zwj ******/
+//0x8020e901
+/**********************/
 #define DUNE_ENTER	_IOR(DUNE_MINOR, 0x01, struct dune_config)
 #define DUNE_GET_SYSCALL _IO(DUNE_MINOR, 0x02)
 #define DUNE_GET_LAYOUT	_IOW(DUNE_MINOR, 0x03, struct dune_layout)

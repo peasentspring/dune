@@ -237,7 +237,11 @@ static int setup_syscall(void)
 		return -errno;
 
 	lstara = lstar & ~(PGSIZE - 1);
+	//the offset of syscall in this page.
 	off = lstar - lstara;
+	/**added by zwj**/
+	printf("offset is:%d\n", off);
+	/*************/
 
 	memcpy(page + off, __dune_syscall, 
 		(unsigned long) __dune_syscall_end -
@@ -656,17 +660,17 @@ int dune_init(bool map_full)
 		goto fail_pgroot;
 	}
 	memset(pgroot, 0, PGSIZE);
-
+	//require the page from kernel. added by wenjia zhao
 	if ((ret = dune_page_init())) {
 		printf("dune: unable to initialize page manager\n");
 		goto err;
 	}
-
+	//construct the guest page table. added by wenjia zhao
 	if ((ret = setup_mappings(map_full))) {
 		printf("dune: unable to setup memory layout\n");
 		goto err;
 	}
-
+	//replace the first syscall function. added by wenjia zhao
 	if ((ret = setup_syscall())) {
 		printf("dune: unable to setup system calls\n");
 		goto err;
