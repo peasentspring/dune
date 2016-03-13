@@ -1,8 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "libdune/dune.h"
 #include "libdune/cpu-x86.h"
+
+static int check_dune(void)
+{
+	dune_flush_tlb();
+
+	return 0;
+}
 
 static void recover(void)
 {
@@ -38,16 +47,35 @@ int main(int argc, char *argv[])
 
 	dune_register_intr_handler(T_DIVIDE, divide_by_zero_handler);
 	dune_register_intr_handler(T_GPFLT, gp_handler);
-
-	unsigned int low, high;
-	unsigned int msr = 0x00000481H;
-	//asm volatile("rdmsr" :"=a" (low),"=d" (high):"c" (msr));
-	printf("edx is:%x, eax is: %x\n", low, high);
-
-
-	ret = 1 / ret; /* divide by zero */
-
-	printf("hello: we won't reach this call\n");
+	
+	//unsigned int low, high;
+	//unsigned int msr = 0x00000481H;
+	////asm volatile("rdmsr" :"=a" (low),"=d" (high):"c" (msr));
+	//printf("edx is:%x, eax is: %x\n", low, high);
+	//
+	//
+	//ret = 1 / ret; /* divide by zero */
+	//
+	//printf("hello: we won't reach this call\n");
+	int pid = fork();
+	if (pid < 0){
+		 printf("fork create error\n");
+	} else if (pid == 0){
+	//child
+	   if (dune_enter())
+		return 1;
+	   printf("%d\n", 1/0);
+	   if (check_dune())
+		exit(1);
+	   char *const hello_mine_args[] = {"hello_mine", NULL};
+	   int err = execv("/home/peasant/Go/Docker/dune/test/hello_mine", hello_mine_args); 
+	   if (err < 0) {
+	      	perror("execvp has error\n");
+	   }
+	}  
+	if (waitpid(pid, NULL, 0) < 0){
+		printf("wait error\n");
+	}
 
 	return 0;
 }
