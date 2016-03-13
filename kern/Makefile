@@ -1,6 +1,7 @@
 # a Makefile for the Dune Kernel Module
 # Adapted from the ipw2200 project.
 
+#CONFIG_MODULE_SIG=n
 ifndef CONFIG_DUNE
 EXTERNAL_BUILD=y
 CONFIG_DUNE=m
