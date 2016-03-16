@@ -31,6 +31,12 @@ static void gp_handler(struct dune_tf *tf)
 	tf->rip = (uintptr_t) &recover;
 }
 
+static void fork_handler(struct dune_tf * tf)
+{
+	printf("no fork, add by wenjia zhao");
+//	tf->rip = (uintprt_t) &recover;
+}
+
 int main(int argc, char *argv[])
 {
 	volatile int ret;
@@ -47,6 +53,7 @@ int main(int argc, char *argv[])
 
 	dune_register_intr_handler(T_DIVIDE, divide_by_zero_handler);
 	dune_register_intr_handler(T_GPFLT, gp_handler);
+	dune_register_syscall_handler(fork_handler);
 	
 	//unsigned int low, high;
 	//unsigned int msr = 0x00000481H;
