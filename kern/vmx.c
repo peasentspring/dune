@@ -1170,6 +1170,10 @@ static long dune_sys_clone(unsigned long clone_flags, unsigned long newsp,
 {
 	struct vmx_vcpu *vcpu;
 	struct pt_regs regs;
+	
+	//----added by wenjia zhao------
+	printk(KERN_INFO "dune_sys_clone is called");
+	//-------------------------------
 
 	asm("movq %%r11, %0" : "=r"(vcpu));
 
