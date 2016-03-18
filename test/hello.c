@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/syscall.h>
 
 #include "libdune/dune.h"
 #include "libdune/cpu-x86.h"
@@ -67,25 +68,26 @@ int main(int argc, char *argv[])
 	//printf("hello: we won't reach this call\n");
 	time_t t;
 	time(&t);
-	int pid = fork();
-	if (pid < 0){
-		 printf("fork create error\n");
-	} else if (pid == 0){
-	//child
-	   if (dune_enter())
-		return 1;
-	   printf("%d\n", 1/0);
-	   if (check_dune())
-		exit(1);
-	   char *const hello_mine_args[] = {"hello_mine", NULL};
-	   int err = execv("/home/peasant/Go/Docker/dune/test/hello_mine", hello_mine_args); 
-	   if (err < 0) {
-	      	perror("execvp has error\n");
-	   }
-	}  
-	if (waitpid(pid, NULL, 0) < 0){
-		printf("wait error\n");
-	}
+	syscall(2);
+//	int pid = fork();
+//	if (pid < 0){
+//		 printf("fork create error\n");
+//	} else if (pid == 0){
+//	//child
+//	   if (dune_enter())
+//		return 1;
+//	   printf("%d\n", 1/0);
+//	   if (check_dune())
+//		exit(1);
+//	   char *const hello_mine_args[] = {"hello_mine", NULL};
+//	   int err = execv("/home/peasant/Go/Docker/dune/test/hello_mine", hello_mine_args); 
+//	   if (err < 0) {
+//	      	perror("execvp has error\n");
+//	   }
+//	}  
+//	if (waitpid(pid, NULL, 0) < 0){
+//		printf("wait error\n");
+//	}
 
 	return 0;
 }
