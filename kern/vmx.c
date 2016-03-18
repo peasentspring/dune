@@ -1184,6 +1184,9 @@ static long dune_sys_fork(void)
 {
 	struct vmx_vcpu *vcpu;
 	struct pt_regs regs;
+	//----added by wenjia zhao------
+	printk(KERN_INFO "dune_sys_fork is called");
+	//-------------------------------
 	
 	asm("movq %%r11, %0" : "=r"(vcpu));
 
@@ -1669,17 +1672,17 @@ __init int vmx_init(void)
 		printk(KERN_ERR "vmx: CPU does not support VT-x\n");
 		return -EIO;
 	}
-
+	//in the new memory set the replaced sys call, added by wenjia zhao
 	vmx_init_syscall();
 
 	if (setup_vmcs_config(&vmcs_config) < 0)
 		return -EIO;
-
+	//If this control is 1, cached translations of linear addresses are associated with a virtualprocessor identifier (VPID). commented by wenjia zhao
 	if (!cpu_has_vmx_vpid()) {
 		printk(KERN_ERR "vmx: CPU is missing required feature 'VPID'\n");
 		return -EIO;
 	}
-
+	//If this control is 1, extended page tables (EPT) are enabled. commented by wenjia zhao
 	if (!cpu_has_vmx_ept()) {
 		printk(KERN_ERR "vmx: CPU is missing required feature 'EPT'\n");
 		return -EIO;
@@ -1704,13 +1707,13 @@ __init int vmx_init(void)
 
 	for_each_possible_cpu(cpu) {
 		struct vmcs *vmxon_buf;
-
+		//alloc vmcs for each cpu, commented by wenjia zhao
 		vmxon_buf = __vmx_alloc_vmcs(cpu);
 		if (!vmxon_buf) {
 			vmx_free_vmxon_areas();
 			return -ENOMEM;
 		}
-
+		//define a variable vmxarea(struct vmcs*) for each cpu. commented by wenjia zhao.
 		per_cpu(vmxarea, cpu) = vmxon_buf;
 	}
 

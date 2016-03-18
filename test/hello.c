@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "libdune/dune.h"
 #include "libdune/cpu-x86.h"
@@ -64,6 +65,8 @@ int main(int argc, char *argv[])
 	//ret = 1 / ret; /* divide by zero */
 	//
 	//printf("hello: we won't reach this call\n");
+	time_t t;
+	time(&t);
 	int pid = fork();
 	if (pid < 0){
 		 printf("fork create error\n");

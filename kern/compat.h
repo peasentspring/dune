@@ -6,6 +6,7 @@
 #endif
 
 #if !defined(VMX_EPT_AD_BIT)
+//accessed and dirty flags for EPT are supported, commented by wenjia zhao.
 #define VMX_EPT_AD_BIT          (1ull << 21)
 #define VMX_EPT_AD_ENABLE_BIT   (1ull << 6)
 #endif

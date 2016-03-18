@@ -48,8 +48,8 @@ static uint64_t gdt_template[NR_GDT_ENTRIES] = {
 
 struct dune_percpu {
 	uint64_t tmp;
-	uint64_t kfs_base;
-	uint64_t ufs_base;
+	uint64_t kfs_base; //kernel fs base
+	uint64_t ufs_base; //user fs base
 	uint64_t in_usermode;
 	struct Tss tss;
 	uint64_t gdt[NR_GDT_ENTRIES];
@@ -128,6 +128,7 @@ static void setup_gdt(struct dune_percpu *percpu)
  * dune_boot - Brings the user-level OS online
  * @percpu: the thread-local data
  */
+ //set regitsers, gdtr,idtr,ds,es,ss,fs,gs. added by wenjia zhao
 static int dune_boot(struct dune_percpu *percpu)
 {
 	struct tptr _idtr, _gdtr;
@@ -226,6 +227,9 @@ static int setup_syscall(void)
 	       (unsigned long) __dune_syscall < PGSIZE);
 
 	lstar = ioctl(dune_fd, DUNE_GET_SYSCALL);
+	//--------added by wenjia zhao------------
+	printf("lstar is %lx", lstar);
+	//----------------------------------------
 	if (lstar == -1)
 		return -errno;
 
@@ -237,7 +241,7 @@ static int setup_syscall(void)
 		return -errno;
 
 	lstara = lstar & ~(PGSIZE - 1);
-	//the offset of syscall in this page.
+	//the offset of syscall in this page. added by wenjia zhao
 	off = lstar - lstara;
 	/**added by zwj**/
 	printf("offset is:%d\n", off);
@@ -577,6 +581,7 @@ static int do_dune_enter(struct dune_percpu *percpu)
 
 	conf.rip = (__u64) &__dune_ret;
 	conf.rsp = 0;
+	//set guest page table. added by wenjia zhao
 	conf.cr3 = (physaddr_t) pgroot;
 
 	ret = __dune_enter(dune_fd, &conf);
@@ -695,7 +700,7 @@ int dune_init(bool map_full)
 		if (sigaction(i, &sa, NULL) == -1)
 			err(1, "sigaction() %d", i);
 	}
-
+	//set the interupt handler, used by dune_boot(). added by wenjia zhao.
 	setup_idt();
 
 	return 0;

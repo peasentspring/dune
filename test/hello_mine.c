@@ -1,7 +1,7 @@
 /*************************************************************************
 	> File Name: hello_mine.c
-	> Author: zxh
-	> Mail: qmg11@163.com 
+	> Author: wenjia zhao
+	> Mail: zhaowenjia@stu.xjtu.edu.cn 
 	> Created Time: Thu 07 Jan 2016 04:59:43 PM CST
  ************************************************************************/
 
