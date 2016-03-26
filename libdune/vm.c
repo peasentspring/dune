@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "dune.h"
-
+//set i as the pd according level. commented by wenjia zhao
 #define PDADDR(n, i)	(((unsigned long) (i)) << PDSHIFT(n))
 #define PTE_DEF_FLAGS	(PTE_P | PTE_W | PTE_U)
 #define LGPGSIZE	(1 << (PGSHIFT + NPTBITS))
@@ -45,8 +45,10 @@ static int __dune_vm_page_walk(ptent_t *dir, void *start_va, void *end_va,
 {
 	// XXX: Using PA == VA
 	int i, ret;
+	//level==3, start_idx is pml4. level==2, start_idx is pdpt. level==1, start_idx is pd. level==0, start_idx is pt. commented by wenjia zhao.
 	int start_idx = PDX(level, start_va);
 	int end_idx = PDX(level, end_va);
+	//discard the 0-47 of va. commented by wenjia zhao
 	void *base_va = (void *) ((unsigned long)
 			start_va & ~(PDADDR(level + 1, 1) - 1));
 
@@ -95,6 +97,7 @@ static int __dune_vm_page_walk(ptent_t *dir, void *start_va, void *end_va,
 			if (!new_pte)
 				return -ENOMEM;
 			memset(new_pte, 0, PGSIZE);
+			//construct the page that pml4 pointed. commented by wenjia zhao.
 			*pte = PTE_ADDR(new_pte) | PTE_DEF_FLAGS;
 		}
 

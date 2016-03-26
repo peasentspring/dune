@@ -33,6 +33,7 @@ struct dune_layout {
 	__u64 base_stack;
 } __attribute__((packed));
 
+//guest physical addresss, commented by wenjia zhao
 #define GPA_STACK_SIZE	((unsigned long) 1 << 28) /* 256 megabytes */
 #define GPA_MAP_SIZE	(((unsigned long) 1 << 31) - GPA_STACK_SIZE) /* 1.75 gigabytes */
 #define LG_ALIGN(addr)	((addr + (1 << 21) - 1) & ~((1 << 21) - 1))

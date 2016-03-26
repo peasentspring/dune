@@ -15,6 +15,7 @@
  */
 #define PDXMASK		((1 << NPTBITS) - 1)
 #define PDSHIFT(n)	(12 + NPTBITS * (n))
+//get the (9bit)pd according the level. commented by wenjia zhao.
 #define PDX(n, la)	((((uintptr_t) (la)) >> PDSHIFT(n)) & PDXMASK)
 
 #define NPTENTRIES	(1 << NPTBITS)

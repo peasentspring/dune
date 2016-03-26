@@ -250,7 +250,8 @@ static int setup_syscall(void)
 	memcpy(page + off, __dune_syscall, 
 		(unsigned long) __dune_syscall_end -
 		(unsigned long) __dune_syscall);
-
+	//set the __dune_syscall in the virtual address which is as same 
+	//as the system_call address in host os. commented by wenjia zhao.
 	for (i = 0; i <= PGSIZE; i += PGSIZE) {
 		uintptr_t pa = dune_mmap_addr_to_pa(page + i);
 		dune_vm_lookup(pgroot, (void *) (lstara + i), 1, &pte);
@@ -265,7 +266,7 @@ static int setup_syscall(void)
 static void setup_vsyscall(void)
 {
 	ptent_t *pte;
-
+	//find the pte which holds VSYSCALL_ADDR
 	dune_vm_lookup(pgroot, (void *) VSYSCALL_ADDR, 1, &pte);
 	*pte = PTE_ADDR(dune_va_to_pa(&__dune_vsyscall_page)) | PTE_P | PTE_U;
 }
@@ -470,32 +471,37 @@ static void setup_vdso_cb(const struct dune_procmap_entry *ent)
 static int __setup_mappings_full(struct dune_layout *layout)
 {
 	int ret;
-
+	//construct the 4 level page table, address is from PAGEBASE to 
+	//PAGEBASE+(MAX_PAGES*PGSIZE)-1. commented by wenjia zhao.
 	ret = dune_vm_map_phys(pgroot, (void *) PAGEBASE,
 			      MAX_PAGES * PGSIZE,
 			      (void *) dune_va_to_pa((void *) PAGEBASE),
 			      PERM_R | PERM_W | PERM_BIG);
 	if (ret)
 		return ret;
-
+	//construct the 4 level page table, address is from 0 to 2^32-1. 
+	//commented by wenjia zhao.	
 	ret = dune_vm_map_phys(pgroot, (void *) 0, 1UL << 32,
 			       (void *) 0,
 			       PERM_R | PERM_W | PERM_X | PERM_U);
 	if (ret)
 		return ret;
-
+	//construct the 4 level page table, address is from layout->base_map to 
+	//layout->base_map+GPA_MAP_SIZE-1. commented by wenjia zhao.	
 	ret = dune_vm_map_phys(pgroot, (void *) layout->base_map, GPA_MAP_SIZE,
 			      (void *) dune_mmap_addr_to_pa((void *) layout->base_map),
 			      PERM_R | PERM_W | PERM_X | PERM_U);
 	if (ret)
 		return ret;
-
+	
+	//construct the 4 level page table, address is from layout->base_stack to 
+	//layout->base_stack+GPA_STACK_SIZE-1. commented by wenjia zhao.
 	ret = dune_vm_map_phys(pgroot, (void *) layout->base_stack, GPA_STACK_SIZE,
 			      (void *) dune_stack_addr_to_pa((void *) layout->base_stack),
 			      PERM_R | PERM_W | PERM_X | PERM_U);
 	if (ret)
 		return ret;
-
+	//printf the memory info in proc/maps. commented by wenjia zhao.
 	dune_procmap_iterate(setup_vdso_cb);
 	setup_vsyscall();
 

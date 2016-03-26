@@ -108,6 +108,14 @@ static long dune_dev_ioctl(struct file *filp,
 		layout.phys_limit = (1UL << boot_cpu_data.x86_phys_bits);
 		layout.base_map = LG_ALIGN(current->mm->mmap_base) - GPA_MAP_SIZE;
 		layout.base_stack = LG_ALIGN(current->mm->start_stack) - GPA_STACK_SIZE;
+
+		// printf boot_cpu_data.x86_phys_bits, added by wenjia zhao-------------
+		printk(KERN_INFO "current->mm->mmap_base is : %lu", current->mm->mmap_base);
+		printk(KERN_INFO "layout.base_map is : %lu", layout.base_map);
+		printk(KERN_INFO "layout.base_stack is : %lu", layout.base_stack);
+		//----------------------------------------------------------------------
+
+		
 		r = copy_to_user((void __user *)arg, &layout,
 				 sizeof(struct dune_layout));
 		if (r) {

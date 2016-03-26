@@ -118,11 +118,12 @@ int dune_page_init(void)
 
 	SLIST_INIT(&pages_free);
 	num_pages = GROW_SIZE;
-
+	//mmap 512*4KB virtual memory, base address is PAGEBASE. commented by wenjia zhao
 	mem = do_mapping((void *) PAGEBASE, num_pages * PGSIZE);
 	if (!mem)
 		return -ENOMEM;
-
+	
+	//malloc 1048576 (struct page), commented by wenjia zhao 
 	pages = malloc(sizeof(struct page) * MAX_PAGES);
 	if (!pages)
 		goto err;
